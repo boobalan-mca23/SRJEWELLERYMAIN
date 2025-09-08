@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from 'axios'
 import Button from "@mui/material/Button";
 import { MdDeleteForever } from "react-icons/md";
 import { FaWeight } from "react-icons/fa";
 import "./Newjobcard.css";
-import Tooltip from '@mui/material/Tooltip';
-
 import {
   goldRowValidation,
   receiveRowValidation,
@@ -22,7 +20,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 import { BACKEND_SERVER_URL } from "../../Config/Config";
-import weight from "../../Assets/weight.jpg";
+import weight from '../../Assets/weight.jpg'
 
 const format = (val) =>
   isNaN(parseFloat(val)) ? "" : parseFloat(val).toFixed(3);
@@ -65,12 +63,6 @@ const NewJobCard = ({
   const [balanceDifference, setBalanceDifference] = useState(0);
   const [time, setTime] = useState("");
 
-  const userRole = localStorage.getItem("userRole");
-  const canCreateUser = localStorage.getItem("canCreateUser");
-  const username = localStorage.getItem("username");
-  console.log("canCreateUser", canCreateUser);
-  console.log("userRole", userRole);
-  console.log("username", username);
 
   const calculatePurity = (w, t) =>
     !isNaN(w) && !isNaN(t) ? ((w * t) / 100).toFixed(3) : "";
@@ -78,7 +70,7 @@ const NewJobCard = ({
   const handleGoldRowChange = (i, field, val) => {
     const copy = [...goldRows];
     copy[i][field] = val;
-    console.log("weight", val);
+ 
     setGoldRows(copy);
     // check validation
     goldRowValidation(goldRows, setFormErrors);
@@ -112,15 +104,11 @@ const NewJobCard = ({
     deductionValidation(deductionRows, setDeductionErrors);
   };
   const handleGoldSmithChange = (e) => {
-    setGoldSmithWastage(e.target.value);
+     setGoldSmithWastage(e.target.value);
     if (!isNaN(e.target.value) && e.target.value !== "") {
       wastageValidation(e.target.value, setWastageErrors);
-      setWastage(
-        adjustToThreeDecimals((netWeight * parseFloat(e.target.value)) / 100)
-      );
-      let calculatedFinalTotal =
-        parseFloat(totalItemWeight) +
-        adjustToThreeDecimals((netWeight * parseFloat(e.target.value)) / 100);
+      setWastage(adjustToThreeDecimals((netWeight * parseFloat(e.target.value)) / 100));
+      let calculatedFinalTotal =parseFloat(totalItemWeight) + adjustToThreeDecimals((netWeight * parseFloat(e.target.value)) / 100);
       setFinalTotal(format(calculatedFinalTotal));
     } else {
       wastageValidation(e.target.value, setWastageErrors);
@@ -151,7 +139,7 @@ const NewJobCard = ({
     0
   );
 
-  const stoneOptions = ["Stone", "Enamel", "Beads", "Chain", "Others"];
+  const stoneOptions = ["Stone", "Enamel", "Beads","Chain", "Others"];
 
   const handleRemoveReceived = (removeIndex) => {
     const isTrue = window.confirm(
@@ -203,7 +191,7 @@ const NewJobCard = ({
       safeParse(balance) >= 0
         ? safeParse(totalGoldWeight) + safeParse(balance)
         : safeParse(balance) + safeParse(totalGoldWeight);
-    console.log("finalTotal", finalTotal);
+         console.log('finalTotal',finalTotal)
     let difference = jobCardBalance - safeParse(finalTotal);
 
     if (received.length >= 1) {
@@ -225,17 +213,16 @@ const NewJobCard = ({
         adjustToThreeDecimals((calculatedNetWeight * goldSmithWastage) / 100)
       )
     );
-
+    
     setFinalTotal(
-      totalItemWeight +
-        adjustToThreeDecimals((calculatedNetWeight * goldSmithWastage) / 100)
+      totalItemWeight + adjustToThreeDecimals((calculatedNetWeight * goldSmithWastage) / 100)
     );
   }, [itemRows, deductionRows]);
 
-  useEffect(() => {
+useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-
+     
       setTime(
         now.toLocaleTimeString("en-IN", {
           hour: "2-digit",
@@ -250,7 +237,7 @@ const NewJobCard = ({
     return () => clearInterval(timer);
   }, []);
 
-  const SaveJobCard = (print = "noprint") => {
+  const SaveJobCard = (print="noprint") => {
     // form validation
     let goldIsTrue = goldRowValidation(goldRows, setFormErrors);
     let itemIsTrue = "";
@@ -268,88 +255,94 @@ const NewJobCard = ({
         receivedIsTrue &&
         !wastageErrors.wastage
       ) {
-        if (print === "print") {
-          window.print();
-          if (isFinished === "false") {
-            console.log("testinnnnn");
+        if(print==="print"){
+          window.print()
+          if(isFinished==="false"){
+            console.log('testinnnnn')
             handleUpdateJobCard(
-              totalGoldWeight,
-              totalItemWeight,
-              totalDeductionWeight,
-              finalTotal,
-              balanceDifference,
-              balance,
-              format(totalReceivedWeight)
-            );
+             totalGoldWeight,
+             totalItemWeight,
+             totalDeductionWeight,
+             finalTotal,
+             balanceDifference,
+             balance,
+             format(totalReceivedWeight)
+             );
           }
-        } else {
-          handleUpdateJobCard(
-            totalGoldWeight,
-            totalItemWeight,
-            totalDeductionWeight,
-            finalTotal,
-            balanceDifference,
-            balance,
-            format(totalReceivedWeight)
-          );
         }
+        else{
+           handleUpdateJobCard(
+             totalGoldWeight,
+             totalItemWeight,
+             totalDeductionWeight,
+             finalTotal,
+             balanceDifference,
+             balance,
+             format(totalReceivedWeight)
+             );
+        }
+       
+        
       } else {
         toast.warn("Give Correct Information");
       }
     } else {
       if (goldIsTrue && receivedIsTrue && !wastageErrors.wastage) {
-        if (print === "print") {
-          window.print();
-          handleSaveJobCard(
-            totalGoldWeight,
-            totalItemWeight,
-            totalDeductionWeight,
-            finalTotal,
-            balanceDifference,
-            balance,
-            totalReceivedWeight
-          );
-        } else {
-          handleSaveJobCard(
-            totalGoldWeight,
-            totalItemWeight,
-            totalDeductionWeight,
-            finalTotal,
-            balanceDifference,
-            balance,
-            totalReceivedWeight
-          );
-        }
+        if(print==="print"){
+          window.print()
+              handleSaveJobCard(
+                totalGoldWeight,
+                totalItemWeight,
+                totalDeductionWeight,
+                finalTotal,
+                balanceDifference,
+                balance,
+                totalReceivedWeight
+             );
+          }else{
+             handleSaveJobCard(
+                totalGoldWeight,
+                totalItemWeight,
+                totalDeductionWeight,
+                finalTotal,
+                balanceDifference,
+                balance,
+                totalReceivedWeight
+             );
+          }
+         
+       
       } else {
         toast.warn("Give Correct Information");
       }
     }
   };
 
-  const getGivenWeight = async (i, item = "gold") => {
-    try {
-      const res = await axios.get(
-        `${BACKEND_SERVER_URL}/api/weightRoute/getWeight`
-      );
-      console.log("weight from mechine", res.data.weightdata);
-
-      if (item === "gold") {
-        const copy = [...goldRows];
-        copy[i]["weight"] = res.data.weightdata;
-        setGoldRows(copy);
-      } else if (item === "item") {
-        const copy = [...itemRows];
-        copy[i]["weight"] = res.data.weightdata;
-        setItemRows(copy);
-      } else {
-        const copy = [...received];
-        copy[i]["weight"] = res.data.weightdata;
-        setReceived(copy);
+  const getGivenWeight=async(i,item="gold")=>{
+      try{
+        const res=await axios.get(`${BACKEND_SERVER_URL}/api/weightRoute/getWeight`)
+         console.log('weight from mechine',res.data.weightdata)
+          
+         if(item==="gold"){
+          const copy = [...goldRows];
+          copy[i]['weight'] = res.data.weightdata;
+          setGoldRows(copy);
+         }else if(item==="item"){
+          const copy = [...itemRows];
+          copy[i]['weight'] = res.data.weightdata;
+          setItemRows(copy);
+         }else{
+           const copy = [...received];
+          copy[i]['weight'] = res.data.weightdata;
+          setReceived(copy);
+         }
+          
+         
+      }catch(err){
+        toast.error("Weight Mechine Not Connected",{autoClose:2000})
       }
-    } catch (err) {
-      toast.error("Weight Mechine Not Connected", { autoClose: 2000 });
-    }
-  };
+  }
+  
 
   return (
     <div className="jobcard-page print-jobcard">
@@ -388,111 +381,114 @@ const NewJobCard = ({
               <div className="header-item">
                 <span className="header-label">Date:</span> {today}
               </div>
-              <div className="header-item">
+               <div className="header-item">
                 <span className="header-label">Time:</span> {time}
               </div>
             </div>
 
+          
+
             <div className="section">
-              <h4 className="section-title">Given Gold</h4>
+              <h3 >Given Gold</h3>
               <div className="goldGrid">
-                {goldRows.map((row, i) => (
-                  <div key={i} className="row">
-                     <Tooltip title={row.username} arrow>
-                    <div className="username-container">
-                      <span className="input givenInput" id="username">{row.username}</span>
-                    </div>
-                    </Tooltip>
-                    
-                    <div className="item-container">
-                      <select
-                        value={row.itemName || ""}
-                        onChange={(e) => handleGoldRowChange(i, "itemName", e.target.value)}
-                        className="select givenGoldSelect"
-                      >
-                        <option value="">Select Item</option>
-                        {masterItems.map((option, index) => (
-                          <option key={index} value={option.itemName}>
-                            {option.itemName}
-                          </option>
-                        ))}
-                      </select>
-                      {formErrors[i]?.itemName && (
-                        <span className="error">{formErrors[i]?.itemName}</span>
-                      )}
-                    </div>
-                    
-                    <div className="weight-icon-container">
-                      <img
-                        src={weight}
-                        className="weight"
-                        onClick={() => getGivenWeight(i)}
-                        alt="Weight"
-                     
-                      />
-                    </div>
-                    
-                    <div className="weight-container">
-                      <input
-                        type="text"
-                        placeholder="Weight"
-                        value={row.weight}
-                        onChange={(e) => handleGoldRowChange(i, "weight", e.target.value)}
-                        className="input givenInput"
-                      />
-                      {formErrors[i]?.weight && (
-                        <span className="error">{formErrors[i].weight}</span>
-                      )}
-                    </div>
-                    
-                    <div className="operator-container">
-                      <span className="operator">×</span>
-                    </div>
-                    
-                    <div className="touch-container">
-                      <input
-                        type="text"
-                        placeholder="Touch"
-                        value={row.touch}
-                        onChange={(e) => handleGoldRowChange(i, "touch", e.target.value)}
-                        className="input givenTouch"
-                       
-                      />
-                      {formErrors[i]?.touch && (
-                        <span className="error">{formErrors[i].touch}</span>
-                      )}
-                    </div>
-                    
-                    <div className="delete-container">
-                      {!row.id && (
-                        <MdDeleteForever
-                          className="deleteIcon"
-                          onClick={() => handleRemovegold(i)}
-                        />
-                      )}
-                    </div>
+              {goldRows.map((row, i) => (
+                <div key={i} className="row">
+                     <span style={{marginTop:"5px"}}>{i<9 ? (`0${i+1}.`):(`${i+1}.`)} </span> 
+                      <span className="userinput" id="username">{row.username}</span>
+                  <div>
+                    <select
+                      value={row.itemName}
+                      onChange={(e) =>
+                        handleGoldRowChange(i, "itemName", e.target.value)
+                      }
+                      className="givenGoldSelect"
+
+                    >
+                      <option value="">Item</option>
+                      {masterItems.map((option, index) => (
+                        <option key={index} value={option.itemName}>
+                          {option.itemName}
+                        </option>
+                      ))}
+                    </select>{" "}
+                    <br></br>
+                    {formErrors[i]?.itemName && (
+                      <span className="error">{formErrors[i]?.itemName}</span>
+                    )}
                   </div>
-                ))}
-              </div>
-              <div className="Balance">
-                <button
-                  onClick={() =>
-                    setGoldRows([
-                      ...goldRows,
-                      { username: localStorage.getItem("username") || "", itemName: "", weight: "", touch: 91.7 },
-                    ])
-                  }
-                  className="circle-button"
-                >
-                  +
-                </button>
-                <div className="total-gold-container">
-                  <span className="total-gold-label">Total:</span>
-                  <span className="total-gold-value">
-                    {format(totalGoldWeight)}
-                  </span>
+                  <div>
+                    <img src={weight} className ="weight" onClick={()=>{getGivenWeight(i)}}></img>
+                  </div>
+                  
+                  <div>
+                   
+                    <input
+                      type="text"
+                      placeholder="Wt"
+                      value={row.weight}
+                      onChange={(e) =>
+                        handleGoldRowChange(i, "weight", e.target.value)
+                      }
+                      className="input givenInput"
+                    />{" "}
+                     
+                    <br></br>
+                   
+                    {formErrors[i]?.weight && (
+                      <span className="error">{formErrors[i].weight}</span>
+                    )}
+                  </div>
+                  
+
+                 <div> <span className="operator">x</span></div>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Touch"
+                      value={row.touch}
+                      onChange={(e) =>
+                        handleGoldRowChange(i, "touch", e.target.value)
+                      }
+                      className="input givenTouch"
+                    />
+                    <br></br>
+                    {formErrors[i]?.touch && (
+                      <span className="error">{formErrors[i].touch}</span>
+                    )}
+                  </div>
+                  <div>
+                      {!row.id && (
+                    <MdDeleteForever
+                      className="deleteIcon"
+                      onClick={() => {
+                        handleRemovegold(i);
+                      }}
+                    />
+                  )}
+                  </div>
+                  
                 </div>
+              ))}
               </div>
+               <div className="Balance">
+                   <button
+                onClick={() =>
+                  setGoldRows([
+                    ...goldRows,
+                    {username: localStorage.getItem("username"), itemName: "", weight: "", touch: "91.70" },
+                  ])
+                }
+                className="circle-button"
+              >
+                +
+              </button>
+              <div className="total-gold-container">
+                <span className="total-gold-label">Total:</span>
+                <span className="total-gold-value">
+                  {format(totalGoldWeight)}
+                </span>
+              </div>
+               </div>
             </div>
 
             <div className="section">
@@ -510,7 +506,7 @@ const NewJobCard = ({
                     {format(totalGoldWeight)}
                   </span>
                 </div>
-
+              
                 <div className="balance-display-row">
                   <span className="balance-label">Total Balance:</span>
                   <span className="balance-value">{format(totalBalance)}</span>
@@ -518,77 +514,64 @@ const NewJobCard = ({
               </div>
             </div>
 
-            <div
-              className="section itemDelivery"
-              style={{ opacity: edit ? 1 : 0.3 }}
-            >
-              <h4 className="section-title">Item Delivery</h4>
+            <div className="section itemDelivery" style={{opacity:edit?1:0.3}} >
+              <h3 >Item Delivery</h3>
               <div className="itemsGrid">
                 {itemRows.map((item, i) => (
-                  <div key={i} className="row">
-                    <div className="item-select">
-                      <input
-                      
-                        type="text"
-                        placeholder="Item Weight"
-                        value={item.weight}
-                        onChange={(e) =>
-                          handleItemRowChange(i, "weight", e.target.value)
-                        }
-                        className="input"
-                        disabled={!edit}
-                        
-                      />
-                      <br></br>
-                      {itemErrors[i]?.weight && (
-                        <span className="error">{itemErrors[i]?.weight}</span>
-                      )}
-                    </div>
-
-                    <div>
-                      {edit && (
-                        <img
-                          src={weight}
-                          className="weight"
-                          onClick={() => {
-                            getGivenWeight(i, "item");
-                          }}
-                        ></img>
-                      )}
-                    </div>
-
-                    <div className="item-select">
-                      <select
-                        value={item.itemName || ""}
-                        onChange={(e) =>
-                          handleItemRowChange(i, "itemName", e.target.value)
-                        }
-                        className="select "
-                        disabled={!edit}
-                       
-                      >
-                        <option value="">Select Item</option>
-                        {masterItems.map((option, index) => (
-                          <option key={index} value={option.itemName}>
-                            {option.itemName}
-                          </option>
-                        ))}
-                      </select>
-                      <br></br>
-                      {itemErrors[i]?.itemName && (
-                        <span className="error">{itemErrors[i]?.itemName}</span>
-                      )}
-                    </div>
-                    {/* sealName */}
-                    <div className="item-select"> 
+                <div key={i} className="row " >
+                    <span style={{marginTop:"5px"}}>{i<9 ? (`0${i+1}.`):(`${i+1}.`)} </span> 
+                  <div >
+                    <input
+                      type="text"
+                      placeholder="Wt"
+                      value={item.weight}
+                      onChange={(e) =>
+                        handleItemRowChange(i, "weight", e.target.value)
+                      }
+                      className="input itemwt"
+                      disabled={!edit}
+                    />
+                    <br></br>
+                    {itemErrors[i]?.weight && (
+                      <span className="error">{itemErrors[i]?.weight}</span>
+                    )}
+                  </div>
+                   <div>
+                    {edit && <img src={weight} className ="weight" onClick={()=>{getGivenWeight(i,"item")}}></img> }
+                   
+                  </div>
+              
+                  <div>
+                    <select
+                      value={item.itemName}
+                      onChange={(e) =>
+                        handleItemRowChange(i, "itemName", e.target.value)
+                      }
+                      className="itemname-select"
+                      disabled={!edit}
+                    >
+                      <option value="">Item</option>
+                      {masterItems.map((option, index) => (
+                        <option key={index} value={option.itemName}>
+                          {option.itemName}
+                        </option>
+                      ))}
+                    </select>
+                    <br></br>
+                    {itemErrors[i]?.itemName && (
+                      <span className="error">{itemErrors[i]?.itemName}</span>
+                    )}
+                  </div>
+                   <div > 
                       <select
                         value={item.sealName || ""}
                         onChange={(e) =>
                           handleItemRowChange(i, "sealName", e.target.value)
                         }
-                        className="select"
+                        className="seal-select"
+                       
                       >
-                        <option value="">SealItem</option>
+                        <option value="">Seal</option>
                         {masterSeal.map((option, index) => (
                           <option key={index} value={option.sealName}>
                             {option.sealName}
@@ -600,16 +583,17 @@ const NewJobCard = ({
                         <span className="error">{itemErrors[i]?.sealName}</span>
                       )}
                     </div>
-                    {!item.id && (
-                      <MdDeleteForever
-                        className="deleteIcon"
-                        onClick={() => {
-                          handleRemoveItem(i);
-                        }}
-                      />
-                    )}
-                  </div>
-                ))}
+
+                  {!item.id && (
+                    <MdDeleteForever
+                      className="deleteIcon"
+                      onClick={() => {
+                        handleRemoveItem(i);
+                      }}
+                    />
+                  )}
+                </div>
+              ))}
               </div>
               <button
                 onClick={() =>
@@ -617,7 +601,7 @@ const NewJobCard = ({
                 }
                 className="circle-button"
                 disabled={!edit}
-                style={{ opacity: edit ? 1 : 0.3 }}
+                style={{opacity:edit?1:0.3}}
               >
                 +
               </button>
@@ -627,164 +611,177 @@ const NewJobCard = ({
                   {format(totalItemWeight)}
                 </span>
               </div>
-              <div className="wastageBox">
-                <div className="deduction-section">
-                  <h4 className="section-title">BC Section </h4>
-                  {deductionRows.map((deduction, i) => (
-                    <div key={i} className="deduction-row">
-                      <div>
-                        <select
-                          value={deduction.type || ""}
-                          onChange={(e) =>
-                            handleDeductionChange(i, "type", e.target.value)
-                          }
-                          className="deduction-select"
-                          disabled={!edit}
-                        >
-                          {stoneOptions.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
-                        <br></br>
-                        {deductionErrors[i]?.type && (
-                          <span className="error">
-                            {deductionErrors[i]?.type}
-                          </span>
-                        )}
-                      </div>
-                      <div>
-                        {deduction.type === "Others" && (
-                          <input
-                            disabled={!edit}
-                            type="text"
-                            placeholder="Specify type"
-                            value={deduction.customType}
-                            onChange={(e) =>
-                              handleDeductionChange(
-                                i,
-                                "customType",
-                                e.target.value
-                              )
-                            }
-                            className="deduction-input"
-                          />
-                        )}
-                        <br></br>
-                        {deductionErrors[i]?.customType && (
-                          <span className="error">
-                            {deductionErrors[i]?.customType}
-                          </span>
-                        )}
-                      </div>
-                      <div>
+          <div className="wastageBox">
+              <div className="deduction-section" >
+                <h3>BC Section </h3>
+                {deductionRows.map((deduction, i) => (
+                  <div key={i} className="deduction-row">
+                      <span style={{marginTop:"5px"}}>{i<9 ? (`0${i+1}.`):(`${i+1}.`)} </span> 
+                    <div>
+                      <select
+                        value={deduction.type}
+                        onChange={(e) =>
+                          handleDeductionChange(i, "type", e.target.value)
+                        }
+                        className="deduction-select"
+                        disabled={!edit}
+                      >
+                        {stoneOptions.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                      <br></br>
+                      {deductionErrors[i]?.type && (
+                        <span className="error">
+                          {deductionErrors[i]?.type}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      {deduction.type === "Others" && (
                         <input
                           disabled={!edit}
                           type="text"
-                          value={deduction.weight}
+                          placeholder="Specify type"
+                          value={deduction.customType}
                           onChange={(e) =>
-                            handleDeductionChange(i, "weight", e.target.value)
+                            handleDeductionChange(
+                              i,
+                              "customType",
+                              e.target.value
+                            )
                           }
                           className="deduction-input"
-                          placeholder="Weight"
                         />
-
-                        <br></br>
-                        {deductionErrors[i]?.weight && (
-                          <span className="error">
-                            {deductionErrors[i]?.weight}
-                          </span>
-                        )}
-                      </div>
-                      <div className="delBtn">
-                        {!deduction.id && (
-                          <MdDeleteForever
-                            className="deleteIcon"
-                            onClick={() => {
-                              handleRemovededuction(i);
-                            }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  <button
-                    onClick={() =>
-                      setDeductionRows([
-                        ...deductionRows,
-                        { type: "Stone", customType: "", weight: "" },
-                      ])
-                    }
-                    disabled={!edit}
-                    className="circle-button"
-                  >
-                    +
-                  </button>
-                </div>
-
-                <div className="wastageSection">
-                  <h4 className="section-title">Wastage Section </h4>
-
-                  <div className="wastageInputBox">
-                    <input readOnly type="number" value={netWeight} />
-                    <span className="operator">x</span>
-                    <div className="watageGoldSmith">
-                      <input
-                        type="text"
-                        value={goldSmithWastage}
-                        onChange={(e) => {
-                          handleGoldSmithChange(e);
-                        }}
-                        disabled={!edit}
-                      />{" "}
+                      )}
                       <br></br>
-                      {wastageErrors?.wastage && (
-                        <span className="error">{wastageErrors?.wastage}</span>
+                      {deductionErrors[i]?.customType && (
+                        <span className="error">
+                          {deductionErrors[i]?.customType}
+                        </span>
                       )}
                     </div>
-                    <span className="operator">=</span>
-                    <input readOnly type="number" value={wastage} />
+                    <div>
+                      <input
+                        disabled={!edit}
+                        type="text"
+                        value={deduction.weight}
+                        onChange={(e) =>
+                          handleDeductionChange(i, "weight", e.target.value)
+                        }
+                        className="deduction-input"
+                        placeholder="Weight"
+                      />
+                      
+                      <br></br>
+                      {deductionErrors[i]?.weight && (
+                        <span className="error">
+                          {deductionErrors[i]?.weight}
+                        </span>
+                      )}
+                    </div>
+                    <div className="delBtn">
+                       {!deduction.id && (
+                      <MdDeleteForever
+                        className="deleteIcon"
+                        onClick={() => {
+                          handleRemovededuction(i);
+                        }}
+                      />
+                    )}
+                    </div>
+                   
                   </div>
-                  <div className="finalTotalContainer">
-                    <span className="finalTotal">
-                      <strong>Total</strong> = {format(totalItemWeight)} +{" "}
-                      {parseFloat(wastage).toFixed(3)}
-                    </span>
-
-                    <span className="finalTotal">
-                      {" "}
-                      = <strong> {format(finalTotal)}</strong>
-                    </span>
-                  </div>
-                </div>
+                ))}
+                <button
+                  onClick={() =>
+                    setDeductionRows([
+                      ...deductionRows,
+                      { type: "Stone", customType: "", weight: "" },
+                    ])
+                  }
+                  disabled={!edit}
+                  className="circle-button"
+                >
+                  +
+                </button>
+               
               </div>
-              <div className="total-purity-container">
-                <span className="total-purity-label">Total Stone Wt:</span>
-                <span className="total-purity-value">
-                  {format(totalDeductionWeight)}
+
+              <div className="wastageSection">
+                  <h3>Wastage Section </h3>
+         
+               <div className="wastageInputBox">
+                 
+                  <input
+                    readOnly
+                    type="number"
+                    value={netWeight}
+                    
+                  />
+                  <span className="operator">x</span>
+                  <div  className="watageGoldSmith">
+                    <input
+                      type="text"
+                      value={goldSmithWastage}
+                     
+                      onChange={(e) => {
+                        handleGoldSmithChange(e);
+                      }}
+                      disabled={!edit}
+                    />{" "}
+                    <br></br>
+                    {wastageErrors?.wastage && (
+                      <span className="error">{wastageErrors?.wastage}</span>
+                    )}
+                  </div>
+                  <span className="operator">=</span>
+                  <input
+                    readOnly
+                    type="number"
+                    value={wastage}
+                   
+                  />
+                </div>
+                <div className="finalTotalContainer">
+                <span className="finalTotal">
+                  <strong>Total</strong> = {format(totalItemWeight)} +{" "}
+                  {parseFloat(wastage).toFixed(3)}
+                </span>
+              
+                <span className="finalTotal">
+                  {" "}
+                  = <strong> {format(finalTotal)}</strong>
                 </span>
               </div>
+           
+              </div>
+             </div>
+              <div className="total-purity-container">
+                  <span className="total-purity-label">
+                    Total Stone Wt:
+                  </span>
+                  <span className="total-purity-value">
+                    {format(totalDeductionWeight)}
+                  </span>
+                </div>
               <div className="net-weight-display">
                 <span className="header-label">Net Weight:</span>
                 <span className="net-weight-value" style={{ color: "blue" }}>
                   {netWeight}
                 </span>
               </div>
+             
+              
 
-              <div className="recevedSection">
-                <h4 className="section-title">Received Section</h4>
+              <div className="recevedSection" >
+                <h3>Received Section</h3>
                 {received.map((row, i) => (
                   <div key={i} className="row">
-                    <div>
-                      <img
-                        src={weight}
-                        className="weight"
-                        onClick={() => {
-                          getGivenWeight(i, "receive");
-                        }}
-                      ></img>
-                    </div>
+                      <span style={{marginTop:"5px"}}>{i<9 ? (`0${i+1}.`):(`${i+1}.`)} </span> 
+                 
                     <div>
                       <input
                         type="number"
@@ -804,7 +801,7 @@ const NewJobCard = ({
                       )}
                     </div>
                     <span className="operator">x</span>
-
+                  
                     <div>
                       <input
                         type="number"
@@ -821,6 +818,9 @@ const NewJobCard = ({
                         </span>
                       )}
                     </div>
+                     <div>
+                    <img src={weight} className ="weight" onClick={()=>{getGivenWeight(i,"receive")}}></img>
+                  </div>
                     {!row.id && (
                       <MdDeleteForever
                         className="deleteIcon"
@@ -839,28 +839,26 @@ const NewJobCard = ({
             /> */}
                   </div>
                 ))}
-                {itemRows.length > 0 && (
-                  <button
-                    onClick={() =>
-                      setReceived([...received, { weight: 0, touch: 91.7 }])
+                {itemRows.length>0 && <button
+                  onClick={() =>
+                    setReceived([...received, { weight: 0, touch: 91.7 }])
+                  }
+                  className="circle-button" 
+                  // this code used for does'nt open previous job card and if its last job card and its status true that time is not work
+                 disabled={
+                   edit? !lastJobCardId
+                    ? true // If lastJobCard doesn't exist yet, disable the button
+                    : jobCardId !==lastJobCardId
+                   ? true
+                   : lastIsFinish === "false"
+                   ? false
+                   : true : true
+                     
                     }
-                    className="circle-button"
-                    // this code used for does'nt open previous job card and if its last job card and its status true that time is not work
-                    disabled={
-                      edit
-                        ? !lastJobCardId
-                          ? true // If lastJobCard doesn't exist yet, disable the button
-                          : jobCardId !== lastJobCardId
-                          ? true
-                          : lastIsFinish === "false"
-                          ? false
-                          : true
-                        : true
-                    }
-                  >
-                    +
-                  </button>
-                )}
+
+                >
+                  +
+                </button>}
                 <div className="total-purity-container">
                   <span className="total-purity-label">Total:</span>
                   <span className="total-purity-value">
@@ -883,9 +881,9 @@ const NewJobCard = ({
                 color="success"
                 style={{ marginRight: "15px" }}
                 onClick={() => SaveJobCard()}
-                disabled={edit ? (isFinished === "true" ? true : false) : false}
+                disabled={edit?isFinished==="true"? true:false:false}
               >
-                {edit ? "UPDATE" : "SAVE"}
+                {edit ?"UPDATE":"SAVE"}
               </Button>
               <Button
                 variant="contained"
@@ -896,28 +894,29 @@ const NewJobCard = ({
               </Button>
             </div>
 
-            {balanceDifference > 0 ? (
-              <p className="balance-text-goldsmith">
-                Goldsmith should give balance:
-                <span className="balance-amount">
-                  {format(balanceDifference)}
-                </span>
-              </p>
-            ) : balanceDifference < 0 ? (
-              <p className="balance-text-owner">
-                Owner should give balance:
-                <span className="balance-amount">
-                  {format(balanceDifference)}
-                </span>
-              </p>
-            ) : (
-              <p className="balance-text-owner">
-                balance Nil:
-                <span className="balance-amount">
-                  {format(balanceDifference)}
-                </span>
-              </p>
-            )}
+              {balanceDifference > 0 ? (
+                <p className="balance-text-goldsmith">
+                  Goldsmith should give balance:
+                  <span className="balance-amount">
+                    {format(balanceDifference)}
+                  </span>
+                </p>
+              ) : balanceDifference < 0 ? (
+                <p className="balance-text-owner">
+                  Owner should give balance:
+                  <span className="balance-amount">
+                    {format(balanceDifference)}
+                  </span>
+                </p>
+              ) : (
+                <p className="balance-text-owner">
+                  balance Nil:
+                  <span className="balance-amount">
+                    {format(balanceDifference)}
+                  </span>
+                </p>
+              )}
+         
           </div>
         </DialogContent>
       </Dialog>
