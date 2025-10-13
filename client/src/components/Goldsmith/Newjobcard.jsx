@@ -3,7 +3,7 @@ import axios from 'axios'
 import Button from "@mui/material/Button";
 import { MdDeleteForever } from "react-icons/md";
 import { FaWeight } from "react-icons/fa";
-import "./Newjobcard.css";
+import "./NewJobCard.css";
 import {
   goldRowValidation,
   receiveRowValidation,
@@ -644,7 +644,7 @@ useEffect(() => {
                         <input
                           disabled={!edit}
                           type="text"
-                          placeholder="Specify type"
+                          placeholder="type"
                           value={deduction.customType}
                           onChange={(e) =>
                             handleDeductionChange(
@@ -846,15 +846,7 @@ useEffect(() => {
                   className="circle-button" 
                   // this code used for does'nt open previous job card and if its last job card and its status true that time is not work
                  disabled={
-                   edit? !lastJobCardId
-                    ? true // If lastJobCard doesn't exist yet, disable the button
-                    : jobCardId !==lastJobCardId
-                   ? true
-                   : lastIsFinish === "false"
-                   ? false
-                   : true : true
-                     
-                    }
+                   edit? isFinished==="true" ? true:false:true}
 
                 >
                   +
